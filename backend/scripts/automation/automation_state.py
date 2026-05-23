@@ -73,6 +73,11 @@ class AutomationStateManager(metaclass=SingletonMeta):
     def register_callback(self, cb: Callable):
         self._on_status_change.append(cb)
 
+    def set_manual_exposure_mode(self, active: bool):
+        """设置手动曝光模式"""
+        with self._lock:
+            pass
+
     def _notify(self):
         for cb in self._on_status_change:
             try:

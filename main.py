@@ -15,7 +15,12 @@ XM全能营销助手
   python main.py accept                    # 通过新好友申请
   python main.py contacts                 # 列出联系人
   python main.py convs                    # 列出会话
+  python main.py contacts                 # 列出联系人
+  python main.py convs                    # 列出会话
   python main.py experts                  # 列出AI专家
+  python main.py contact-sync             # 同步联系人(导出)
+  python main.py chat-history --name 张三  # 读取聊天记录
+  python main.py db-export                # 导出微信数据库
 """
 import sys
 import argparse
@@ -129,6 +134,78 @@ def cmd_experts(args):
         print(f"     自动备注: {e.auto_notes or '关闭'}")
 
 
+def cmd_contact_sync(args):
+    """同步联系人"""
+    from src.wechat_contact_sync import ContactSyncManager
+    from src.wechat_uia import is_login
+
+    if not is_login():
+        print("微信未登录")
+        return
+
+    mgr = ContactSyncManager()
+    contacts = mgr.sync()
+    print(f"\n共扫描到 {len(contacts)} 个联系人")
+
+    if args.export == "json":
+        path = mgr.export_json()
+        print(f"已导出: {path}")
+    elif args.export == "csv":
+        path = mgr.export_csv()
+        print(f"已导出: {path}")
+    else:
+        for i, c in enumerate(contacts[:20], 1):
+            print(f"  {i}. {c.get('nickname','')} (微信号: {c.get('wxid','')})")
+        if len(contacts) > 20:
+            print(f"  ... 共 {len(contacts)} 个(显示前20)")
+
+
+def cmd_chat_history(args):
+    """读取聊天记录"""
+    from src.wechat_chat_history import ChatHistoryReader
+    from src.wechat_uia import is_login
+
+    if not is_login():
+        print("微信未登录")
+        return
+
+    if not args.name:
+        print("请指定联系人或群聊名称: --name 张三")
+        return
+
+    reader = ChatHistoryReader()
+    msgs = reader.read(args.name, max_count=args.count or 50)
+    print(f"\n{args.name} 的最近 {len(msgs)} 条消息:")
+    for m in msgs[-10:]:
+        print(f"  [{m['role']}] {m['sender']}: {m['content'][:80]}")
+
+    if args.export:
+        path = reader.export_json(args.name)
+        print(f"已导出: {path}")
+
+
+def cmd_db_export(args):
+    """导出微信数据库"""
+    from src.wechat_db_export import WeChatDBExporter
+    from src.wechat_uia import is_login
+
+    if not is_login():
+        print("微信未登录")
+        return
+
+    exporter = WeChatDBExporter()
+    result = exporter.export()
+    if result["success"]:
+        print(f"\n导出完成")
+        print(f"  目录: {result['path']}")
+        for f in result.get("files", []):
+            print(f"  文件: {f}")
+        if "tables" in result:
+            for db, tables in result["tables"].items():
+                print(f"  {db}.db 表: {tables}")
+    else:
+        print("导出失败")
+
 def cmd_accept(args):
     """通过好友请求"""
     from src.wechat_uia import accept_contacts, new_contact_count, is_login
@@ -228,6 +305,9 @@ def cmd_interactive(args):
         print("  8. 群发消息")
         print("  9. 加好友(批量)")
         print(" 10. 处理新好友申请")
+        print(" 11. 同步联系人(导出)")
+        print(" 12. 读取聊天记录")
+        print(" 13. 导出微信数据库")
         print("  0. 退出")
         print("-" * 50)
 
@@ -262,6 +342,13 @@ def cmd_interactive(args):
             welcome = input("欢迎语(回车跳过): ").strip()
             label = input("备注标签(回车跳过): ").strip()
             cmd_check_new_contacts(argparse.Namespace(all=True, welcome=welcome, label=label, config=""))
+        elif choice == "11":
+            cmd_contact_sync(argparse.Namespace(export=""))
+        elif choice == "12":
+            name = input("联系人名称: ").strip()
+            cmd_chat_history(argparse.Namespace(name=name, count=30, export=""))
+        elif choice == "13":
+            cmd_db_export(argparse.Namespace())
         elif choice == "0":
             print("再见!")
             break
@@ -333,6 +420,22 @@ def main():
     p.add_argument("--welcome", default="", help="欢迎语")
     p.add_argument("--label", default="", help="备注标签")
     p.set_defaults(func=lambda a: cmd_check_new_contacts(a))
+
+    # contact-sync
+    p = sub.add_parser("contact-sync", help="同步联系人")
+    p.add_argument("--export", choices=["json", "csv"], default="", help="导出格式")
+    p.set_defaults(func=lambda a: cmd_contact_sync(a))
+
+    # chat-history
+    p = sub.add_parser("chat-history", help="读取聊天记录")
+    p.add_argument("--name", default="", help="联系人或群聊名称")
+    p.add_argument("--count", type=int, default=50, help="读取条数")
+    p.add_argument("--export", default="", help="导出到文件路径")
+    p.set_defaults(func=lambda a: cmd_chat_history(a))
+
+    # db-export
+    p = sub.add_parser("db-export", help="导出微信数据库")
+    p.set_defaults(func=lambda a: cmd_db_export(a))
 
     args = parser.parse_args()
 
