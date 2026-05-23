@@ -1,22 +1,19 @@
-"""抖音Cookie提取(Playwright)"""
-from typing import Optional
+"""各平台Cookie提取 - Playwright"""
+from typing import Dict, Optional
 
 
-def get_douyin_cookie(username: str = "", password: str = "") -> Optional[dict]:
-    """通过playwright获取抖音Cookie"""
+def get_douyin_cookie(account: str = "", password: str = "") -> Optional[Dict]:
+    """获取抖音Cookie"""
     return None
 
 
-def get_kuaishou_cookie() -> Optional[dict]:
-    """获取快手Cookie"""
+def get_kuaishou_cookie() -> Optional[Dict]:
     return None
 
 
-def get_xhs_cookie() -> Optional[dict]:
-    """获取小红书Cookie"""
+def get_xhs_cookie() -> Optional[Dict]:
     return None
 
 
-def get_tencent_cookie() -> Optional[dict]:
-    """获取腾讯视频Cookie"""
+def get_tencent_cookie() -> Optional[Dict]:
     return None
