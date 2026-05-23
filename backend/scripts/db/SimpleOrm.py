@@ -1,18 +1,13 @@
-"""简单 ORM - 反编译适配"""
+"""简单 ORM - 存储层"""
 from typing import Any, Dict, List, Optional
 
 
 class SimpleORM:
-    """简化的 ORM 封装"""
+    """简化的 ORM"""
 
-    def __init__(self, table_name: str = "", db_path: str = None):
+    def __init__(self, conn=None, table_name: str = ""):
+        self.conn = conn
         self.table_name = table_name
-        self.db_path = db_path
-        self._conn = None
 
-    def get_connection(self):
-        import sqlite3
-        if self._conn is None and self.db_path:
-            self._conn = sqlite3.connect(self.db_path)
-            self._conn.row_factory = sqlite3.Row
-        return self._conn
+    def all(self) -> list:
+        return []

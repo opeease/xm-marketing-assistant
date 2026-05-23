@@ -1,29 +1,30 @@
 """消息状态数据库"""
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from common.custom_enums import WechatMsgStatus
+
+DB_PATH = str(Path.home() / "xm-assistant" / "msg_status.json")
 
 
 class MsgStatusDB:
     """消息状态数据库"""
 
-    def __init__(self, db_path: str = None):
-        self._path = db_path or str(Path.home() / "dt-ai-helper" / "msg_status.json")
-        self._data: Dict[str, dict] = self._load()
+    def __init__(self):
+        self._data = self._load()
 
     def _load(self) -> dict:
         try:
-            if Path(self._path).exists():
-                return json.loads(Path(self._path).read_text(encoding="utf-8"))
+            if Path(DB_PATH).exists():
+                return json.loads(Path(DB_PATH).read_text(encoding="utf-8"))
         except Exception:
             pass
         return {}
 
     def _save(self):
-        Path(self._path).parent.mkdir(parents=True, exist_ok=True)
-        Path(self._path).write_text(json.dumps(self._data, ensure_ascii=False, indent=2), encoding="utf-8")
+        Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
+        Path(DB_PATH).write_text(json.dumps(self._data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def save_msg_status(self, msg_vo: dict):
         msg_id = msg_vo.get("msgId")
