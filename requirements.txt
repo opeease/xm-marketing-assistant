@@ -1,0 +1,8 @@
+# XM全能营销助手 - 依赖
+uiautomation>=2.1
+pywin32>=306
+pyperclip>=1.8
+psutil>=5.9
+requests>=2.31
+loguru>=0.7
+pyyaml>=6.0

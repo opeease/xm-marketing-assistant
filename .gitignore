@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+venv/
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Config
+config/settings_local.yaml
+config/experts/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Project specific
+backend/logs/

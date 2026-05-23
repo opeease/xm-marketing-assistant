@@ -1,0 +1,40 @@
+# ============================================================
+# XM全能营销助手 - 默认配置
+# ============================================================
+
+# --- AI 后端配置 ---
+ai:
+  # API 基础地址 (生产/开发)
+  base_url: "https://client.rpa.dockingtech.com"
+  # 请求超时(秒)
+  timeout: 60
+
+# --- 微信UIA配置 ---
+wechat:
+  # 微信进程名匹配
+  process_names:
+    - "wechat.exe"
+    - "weixin.exe"
+    - "WeChat.exe"
+  # UIA 控件搜索超时(秒)
+  search_timeout: 3
+  # 消息发送间隔(秒)
+  send_interval: 0.5
+
+# --- 自动回复配置 ---
+auto_reply:
+  # 扫描未读消息间隔(秒)
+  scan_interval: 15
+  # 最大处理消息数(每次)
+  max_messages: 50
+  # 工作时间外是否回复
+  off_hours_reply: false
+  # 工作时间 (HH:MM-HH:MM)
+  work_time: "08:00-22:00"
+
+# --- 日志配置 ---
+logging:
+  level: "INFO"
+  file: "logs/xm-assistant.log"
+  max_size: "10MB"
+  backup_count: 5
