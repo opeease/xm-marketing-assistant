@@ -1,0 +1,4 @@
+VERSION = 1.0.0
+BUILD = 20260523
+APP_NAME = "XM全能营销助手"
+DESCRIPTION = "微信 AI 全能营销工具 - UIA 操控 + AI 自动回复 + 群发 + 加好友 + 联系人同步"

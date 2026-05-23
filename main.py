@@ -4,8 +4,11 @@ XM全能营销助手
 =============
 微信 AI 营销工具 - UIA 操控 + AI 自动回复 + 群发 + 加好友 + 新好友处理
 
+版本: 1.0.0 (build 20260523)
+
 用法:
   python main.py                          # 交互菜单
+  python main.py --version                # 查看版本
   python main.py auto-reply               # 启动自动回复(持续)
   python main.py auto-reply --once        # 执行一次自动回复
   python main.py monitor                  # 仅监控未读(不回复)
@@ -15,14 +18,18 @@ XM全能营销助手
   python main.py accept                    # 通过新好友申请
   python main.py contacts                 # 列出联系人
   python main.py convs                    # 列出会话
-  python main.py contacts                 # 列出联系人
-  python main.py convs                    # 列出会话
   python main.py experts                  # 列出AI专家
   python main.py contact-sync             # 同步联系人(导出)
   python main.py chat-history --name 张三  # 读取聊天记录
   python main.py db-export                # 导出微信数据库
 """
 import sys
+import argparse
+
+from loguru import logger
+
+VERSION = "1.0.0"
+BUILD = "20260523"
 import argparse
 
 from loguru import logger
@@ -361,6 +368,7 @@ def main():
     parser.add_argument("--api", default="https://client.rpa.dockingtech.com", help="AI 后端地址")
     parser.add_argument("--experts", default=None, help="指定AI专家ID(逗号分隔)")
     parser.add_argument("--interval", type=int, default=15, help="扫描间隔(秒)")
+    parser.add_argument("--version", action="store_true", help="显示版本信息")
 
     sub = parser.add_subparsers(dest="command", help="子命令")
 
@@ -438,6 +446,11 @@ def main():
     p.set_defaults(func=lambda a: cmd_db_export(a))
 
     args = parser.parse_args()
+
+    if args.version:
+        print(f"XM全能营销助手 v{VERSION} (build {BUILD})")
+        print("微信 AI 全能营销工具")
+        return
 
     if args.command:
         args.func(args)

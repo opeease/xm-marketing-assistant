@@ -5,7 +5,7 @@
 [project]
 name = "xm-marketing-assistant"
 version = "1.0.0"
-description = "微信 AI 全能营销助手 - UIA 操控 + AI 自动回复 + 群发管理"
+description = "微信 AI 全能营销助手 - UIA 操控 + AI 自动回复 + 群发 + 加好友 + 联系人同步"
 requires-python = ">=3.10"
 readme = "README.md"
 
